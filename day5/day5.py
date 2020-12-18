@@ -29,14 +29,26 @@ def findCol(input_data):
     return col_l
 
 
+def findMissingVal(input_list):
+    for id in range(len(input_list)-1):
+        if input_list[id + 1] - input_list[id] != 1:
+            print(
+                f"Missing ID between: {input_list[id]} & {input_list[id + 1]}")
+
+
 # %%
 max_id = 0
+id_list = []
 for input_data in lines:
     row = int(findRow(input_data))
     col = int(findCol(input_data))
     idx = int((row * 8) + col)
     max_id = int(np.max((max_id, idx)))
 
-print(f"{input_data}: row {row}, column {col}, seat ID {max_id}")
+    id_list.append(int(idx))
+
+print(f"Highest ID: {input_data}: row {row}, column {col}, seat ID {max_id}")
+
+findMissingVal(sorted(id_list))
 
 # %%
