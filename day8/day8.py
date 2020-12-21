@@ -1,6 +1,7 @@
 # %%
+import time
 with open("/mnt/c/Users/Ryan/Documents/aoc2020/day8/input.txt") as f:
-    instructions = f.read().split("\n")
+    instructions_orig = f.read().split("\n")
 
 
 def decodeInstruction(instruction):
@@ -36,23 +37,55 @@ def jmp(operation):
     return int(operation)
 
 
+def flipOperation(instruction):
+    inst, operation = instruction.split(" ")
+    if inst == "jmp":
+        return "nop " + str(operation)
+    if inst == "nop":
+        return "jmp " + str(operation)
+    else:
+        return instruction
+
+
+def executeBoot(instructions):
+    new_pos = 0
+    executed_instructions = [0]
+    while True:
+        if new_pos >= len(instructions):
+            return True
+        print(f"Executing instruction: {instructions[new_pos]}")
+        pos_offset = decodeInstruction(instructions[new_pos])
+        if pos_offset is not None:
+            new_pos += pos_offset
+            if new_pos in executed_instructions:
+                print("Failed, try again")
+                print(
+                    f"Tried to execute {instructions[new_pos]} on line " +
+                    f" {new_pos} again.")
+                # instructions = instructions_orig.copy()
+                return False
+            executed_instructions.append(new_pos)
+
+
 # %%
-accumulator = 0
-
-# for position, instruction in enumerate(instructions):
-new_pos = 0
-executed_instructions = [0]
-while True:
-    print(f"Executing instruction: {instructions[new_pos]}")
-    pos_offset = decodeInstruction(instructions[new_pos])
-    if pos_offset:
-        new_pos += pos_offset
-        if new_pos in executed_instructions:
+start = time.time()
+changed_ops = []
+instructions = instructions_orig.copy()
+run_orig = False
+for pos, instruction in enumerate(instructions):
+    accumulator = 0
+    if pos not in changed_ops:
+        instructions[pos] = flipOperation(instruction)
+    changed_ops.append(pos)
+    if (instructions != instructions_orig) or not run_orig:
+        if instructions == instructions_orig:
+            run_orig = True
+        if executeBoot(instructions):
             break
-        executed_instructions.append(new_pos)
+        else:
+            instructions = instructions_orig.copy()
 
-print(f"Tried to execute {instructions[new_pos]} on line {new_pos} again.")
 print(f"Accumulator value: {accumulator}")
-
+print(f"Took {time.time() - start} to complete")
 
 # %%
