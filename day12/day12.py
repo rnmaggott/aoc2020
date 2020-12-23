@@ -37,7 +37,43 @@ def p1():
     print(f"X: {current_x}\nY: {current_y}\nDist: {abs(current_x) + abs(current_y)}")
 
 
+def p2():
+    ship_e = 0
+    ship_n = 0
+    wp_e = 10
+    wp_n = 1
+    for inst in instructions:
+        cmd, num = inst
+        if cmd == "N":
+            wp_n += num
+        elif cmd == "S":
+            wp_n -= num
+        elif cmd == "E":
+            wp_e += num
+        elif cmd == "W":
+            wp_e -= num
+        elif cmd == "L":
+            rotation = -num*np.pi/180
+            wp_e_old = wp_e
+            wp_n_old = wp_n
+            wp_e = round(np.cos(rotation)*wp_e_old + np.sin(rotation)*wp_n_old)
+            wp_n = round(-np.sin(rotation)*wp_e_old +
+                         np.cos(rotation)*wp_n_old)
+        elif cmd == "R":
+            rotation = num*np.pi/180
+            wp_e_old = wp_e
+            wp_n_old = wp_n
+            wp_e = round(np.cos(rotation)*wp_e_old + np.sin(rotation)*wp_n_old)
+            wp_n = round(-np.sin(rotation)*wp_e_old +
+                         np.cos(rotation)*wp_n_old)
+        elif cmd == "F":
+            ship_n += num*(wp_n)
+            ship_e += num*(wp_e)
+    print(f"X: {ship_e}\nY: {ship_n}\nDist: {abs(ship_e) + abs(ship_n)}")
+
+
 # %%
 p1()
+p2()
 
 # %%
